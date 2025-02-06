@@ -12,43 +12,45 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="bg-gradient-to-r from-[#112951] via-[#112950] to-[#2f80ed] p-4 shadow-lg">
+    <nav className="font-sans bg-gradient-to-r from-[#112951] via-[#1c4384] to-[#1c4384] p-4 shadow-lg">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
         <div className="flex items-center">
           <img src={Logo} alt="Logo" className="h-13" />
         </div>
 
-        {/* Navigation Links - Modern Style */}
         <div className="flex space-x-6 ml-10">
           {navLinks.map((link) => (
             <a
               key={link.name}
               href={link.href}
               onClick={() => setActiveLink(link.name)}
-              className={`relative px-4 py-2 rounded-lg transition-all duration-300 text-white/80 hover:text-white 
-                ${activeLink === link.name ? 'font-semibold' : ''}`}
+              className={`relative px-4 py-2 transition-all duration-300 text-white/80 hover:text-white group 
+                ${activeLink === link.name ? 'font-semibold text-white' : ''}`}
             >
               {link.name}
-              {/* Animated underline for hover and active state */}
-              <div
-                className={`absolute bottom-0 left-0 w-0 h-0.5 bg-white transition-all duration-300 
-                  ${activeLink === link.name ? 'w-full' : 'group-hover:w-full'} group-hover:left-0`}
-              ></div>
+              {/* Underline effect with left-to-right animation, staying when active */}
+              <span
+                className={`absolute top-15 left-0 h-0.5 bg-white transition-all duration-300 ease-in-out 
+                  ${activeLink === link.name ? 'w-full' : 'w-0 group-hover:w-full'}`}
+              ></span>
             </a>
           ))}
         </div>
 
-        {/* Login Button - Enhanced Look */}
+
+        {/* Login Button - Capsule Style with Border */}
         <div className="flex items-center">
-          <button className="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-2.5 rounded-lg 
-                           shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center">
+          <button className="border border-white text-white px-7 py-2 rounded-full 
+                            shadow-lg hover:shadow-xl transition-all duration-200 
+                            hover:scale-100 flex items-center cursor-pointer">
             <span>Login</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 24 24" fill="white">
+              <path fill="white" d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7V3z"/>
             </svg>
           </button>
         </div>
+
       </div>
     </nav>
   );
