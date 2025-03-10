@@ -4,10 +4,11 @@ import CTSCorARWSChairRoutes from "./routes/CTSCorARWSChairRoutes";
 import ERCmainRoutes from "./routes/ERCmainRoutes";
 import ERCTechnicalCommitteeRoutes from "./routes/ERCTechnicalCommitteeRoutes";
 import OfficeStaffRoutes from "./routes/OfficeStaffRoutes";
+import { AuthContextProvider } from "../context/auth/AuthContext";
 
 const App = () => {
   return (
-    <div className="w-full">
+    <AuthContextProvider>
       <Router>
         <Routes>
           {/* Applicant Routes */}
@@ -29,7 +30,7 @@ const App = () => {
           <Route path="/officestaff/*" element={<OfficeStaffRoutes />} />
         </Routes>
       </Router>
-    </div>
+    </AuthContextProvider>
   );
 };
 

@@ -1,73 +1,64 @@
 import React from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
-import { FileText, ClipboardList, Upload, CreditCard, CheckCircle } from "lucide-react";
-import BuildingSketch from "../../../assets/Applicant/Building-Sketch.png";
+import { CheckCircle, AlertCircle, Loader } from "lucide-react";
 
-const steps = [
-  { id: 1, title: "Download The Form", icon: <FileText />, isCompleted: true },
-  { id: 2, title: "Application Category", icon: <ClipboardList />, isCompleted: true },
-  { id: 3, title: "Upload Evidence", icon: <Upload />, isCompleted: true },
-  { id: 4, title: "Choose Research Type", icon: <ClipboardList />, isCompleted: true },
-  { id: 5, title: "Make Payment", icon: <CreditCard />, isCompleted: true },
-  { id: 6, title: "Finish Submission", icon: <CheckCircle />, isActive: true, isCompleted: false }
-];
-
-const ConfirmSubmission = () => {
-
- const navigate = useNavigate(); // Initialize navigation hook
-
+const ConfirmSubmission = ({ onSubmit, loading, error, success }) => {
   return (
-    <div
-      className="min-h-screen flex flex-col items-center p-8 bg-no-repeat bg-cover bg-center"
-      style={{ backgroundImage: `url(${BuildingSketch})` }}
-    >
-      {/* Heading */}
-      <h2 className="text-3xl md:text-4xl font-bold text-blue-900 text-center">
-        Submit Your Application
-      </h2>
-      <p className="text-blue-600 text-lg mt-2">Confirm Submission</p>
+    <div className="flex flex-col items-center p-4">
+      {/* Confirmation Message */}
+      <div className="w-full bg-white border rounded-lg shadow-sm p-6 text-center">
+        <h3 className="text-xl font-semibold text-gray-800 mb-4">
+          Confirm Your Application Submission
+        </h3>
 
-      {/* Progress Steps */}
-      <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-6 mt-6">
-        <div className="flex justify-between items-center border-b pb-4">
-          {steps.map((step) => (
-            <div key={step.id} className="flex flex-col items-center">
-              <div
-                className={`w-10 h-10 flex items-center justify-center rounded-full text-white font-bold 
-                ${step.isCompleted ? "bg-green-500" : step.isActive ? "bg-blue-900" : "bg-gray-300"}`}
-              >
-                {step.isCompleted ? "✔" : step.id}
-              </div>
-              <p className={`text-xs mt-2 text-center ${step.isActive ? "text-blue-900 font-semibold" : "text-gray-500"}`}>
-                {step.title}
-              </p>
-            </div>
-          ))}
-        </div>
+        <p className="text-gray-600 mb-6">
+          Please review all the information you&apos;ve provided before final
+          submission. Once submitted, you cannot make changes to this
+          application.
+        </p>
 
-        {/* Confirmation Message */}
-        <div className="mt-6 bg-gray-100 border border-gray-300 rounded-lg p-6 text-center">
-          <p className="text-gray-700 text-lg">
-            Review all details, confirm accuracy, and submit your application. 
-            You will receive a confirmation upon successful submission.
-          </p>
-        </div>
+        {/* Status Messages */}
+        {error && (
+          <div className="flex items-center justify-center mb-6 p-3 bg-red-50 text-red-700 rounded-md border border-red-200">
+            <AlertCircle className="mr-2 h-5 w-5" />
+            <span>{error}</span>
+          </div>
+        )}
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-between mt-6">
-          <button 
-            onClick={() => navigate("/submit-application/make-payment")} // Navigate on click
-          className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg shadow-lg">
-            ← Back
-          </button>
-          <button
-            onClick={() => navigate("/submit-application/submission-completed")} // Navigate on click
-            className="bg-gradient-to-r from-green-500 to-green-700 text-white px-6 py-2 rounded-lg shadow-lg 
-                      transition-transform duration-300 transform hover:scale-105 hover:from-green-600 hover:to-green-800"
-          >
-            Finish →
-          </button>
-        </div>
+        {success && (
+          <div className="flex flex-col items-center justify-center mb-6 p-4 bg-green-50 text-green-700 rounded-md border border-green-200">
+            <CheckCircle className="mb-2 h-8 w-8" />
+            <h4 className="text-lg font-bold mb-2">
+              Application Submitted Successfully!
+            </h4>
+            <p className="text-gray-700">
+              Thank you for submitting your research application. We will review
+              your submission and get back to you soon.
+            </p>
+          </div>
+        )}
+
+        {/* Submit Button - Disabled when loading or after success */}
+        <button
+          onClick={onSubmit}
+          disabled={loading || success}
+          className={`flex items-center justify-center w-full md:w-auto px-6 py-3 rounded-lg text-white font-medium mx-auto
+            ${
+              loading || success
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-green-600 hover:bg-green-700 transition-colors"
+            }`}
+        >
+          {loading ? (
+            <>
+              <Loader className="animate-spin mr-2 h-5 w-5" />
+              Submitting...
+            </>
+          ) : success ? (
+            "Submitted"
+          ) : (
+            "Submit Application"
+          )}
+        </button>
       </div>
     </div>
   );

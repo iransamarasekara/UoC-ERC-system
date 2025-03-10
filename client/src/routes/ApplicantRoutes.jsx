@@ -33,18 +33,35 @@ const ApplicantRoutes = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/submit-application" element={<SubmitApplication />} />
         <Route path="/track-application" element={<TrackApplication />} />
-        <Route path="/submit-application/download-form" element={<DownloadForm />} />
-        <Route path="/submit-application/choose-category" element={<ChooseApplicationCategory />} />
-        <Route path="/submit-application/upload-evidence" element={<UploadEvidence />} />
-        <Route path="/submit-application/choose-research-type" element={<ChooseResearchType />} />
-        <Route path="/submit-application/make-payment" element={<MakePayment />} />
-        <Route path="/submit-application/confirm-submission" element={<ConfirmSubmission />} />
-        <Route path="/submit-application/submission-completed" element={<SubmissionCompleted />} />
+        <Route path="/submit-application" element={<SubmitApplication />} />
+        <Route
+          path="/submit-application/choose-category"
+          element={<ChooseApplicationCategory />}
+        />
+        <Route
+          path="/submit-application/upload-evidence"
+          element={<UploadEvidence />}
+        />
+        <Route
+          path="/submit-application/choose-research-type"
+          element={<ChooseResearchType />}
+        />
+        <Route
+          path="/submit-application/make-payment"
+          element={<MakePayment />}
+        />
+        <Route
+          path="/submit-application/confirm-submission"
+          element={<ConfirmSubmission />}
+        />
+        <Route
+          path="/submit-application/submission-completed"
+          element={<SubmissionCompleted />}
+        />
 
         {/* add other routes below */}
       </Routes>
       <Footer />
-
     </>
   );
 };
