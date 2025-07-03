@@ -1,16 +1,25 @@
 import { Search, X } from "lucide-react";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ Import useNavigate
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import logo from "../../../assets/Applicant/logo-menu.png";
+import defaultProfile from "../../../assets/default-profile.png";
 
 const Header = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredResults, setFilteredResults] = useState([]);
+  
+  // Mock user data - replace with props or state from your admin context later
+  const [userData, setUserData] = useState({
+    first_name: "Admin",
+    last_name: "User",
+    role: "ADMIN",
+    profilePic: null
+  });
 
-  const navigate = useNavigate(); // ✅ Initialize useNavigate()
+  const navigate = useNavigate();
 
-  // Sample Data
+  // Sample Data for applicant search (you can replace with API call later)
   const applicants = [
     { id: 1, name: "Alice Johnson", email: "alice@example.com" },
     { id: 2, name: "Bob Smith", email: "bob@example.com" },
@@ -19,10 +28,15 @@ const Header = () => {
     { id: 5, name: "Edward Brown", email: "edward@example.com" },
   ];
 
-  const user = {
-    name: "John Doe",
-    role: "ERC Office Staff",
-    profilePic: "/profile.jpg",
+  // Format user role for display
+  const formatRole = (role) => {
+    if (!role) return "Guest";
+    
+    // Convert roles like "ADMIN" or "ERC_TECHNICAL" to readable format
+    return role
+      .split('_')
+      .map(word => word.charAt(0) + word.slice(1).toLowerCase())
+      .join(' ');
   };
 
   // Handle Search Function
@@ -42,10 +56,18 @@ const Header = () => {
     }
   };
 
-  // ✅ Handle Selecting an Applicant (Navigate to their Page)
+  // Handle Selecting an Applicant (Navigate to their Page)
   const handleSelectApplicant = (id) => {
-    navigate(`/applicant/${id}`); // ✅ Navigate to the applicant's page
+    navigate(`/applicant/${id}`);
+    setFilteredResults([]); // Clear results after selection
+    setSearchQuery(""); // Clear search query
   };
+
+  // Update user data when needed (example only)
+  useEffect(() => {
+    // You can fetch user data here if needed
+    // For now we'll use the mock data
+  }, []);
 
   return (
     <>
@@ -75,7 +97,7 @@ const Header = () => {
                 <div
                   key={applicant.id}
                   className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
-                  onClick={() => handleSelectApplicant(applicant.id)} // ✅ Click to navigate
+                  onClick={() => handleSelectApplicant(applicant.id)}
                 >
                   {applicant.name} ({applicant.email})
                 </div>
@@ -98,16 +120,24 @@ const Header = () => {
             )}
           </button>
 
-          {/* Profile Section */}
+          {/* Profile Section - Dynamic User Data */}
           <div className="flex items-center gap-3">
             <img
-              src={user.profilePic}
+              src={userData.profilePic || defaultProfile}
               alt="User Profile"
-              className="h-10 w-10 md:h-14 md:w-14 rounded-full border-2 border-white object-cover"
+              className="h-10 w-10 md:h-12 md:w-12 rounded-full border-2 border-white object-cover"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = defaultProfile;
+              }}
             />
             <div className="text-white hidden md:block">
-              <p className="text-sm md:text-lg font-semibold">{user.name}</p>
-              <p className="text-xs md:text-sm text-gray-300">{user.role}</p>
+              <p className="text-sm md:text-base font-semibold">
+                {`${userData.first_name} ${userData.last_name}`}
+              </p>
+              <p className="text-xs md:text-sm text-gray-300">
+                {formatRole(userData.role)}
+              </p>
             </div>
           </div>
         </div>
@@ -115,22 +145,22 @@ const Header = () => {
 
       {/* Mobile Search Bar */}
       {showSearch && (
-        <div className="px-6 md:hidden mt-2 relative">
+        <div className="px-6 md:hidden mt-20 absolute left-0 right-0 z-40 bg-[#0F2E64] py-3">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
             placeholder="Search Applicant..."
-            className="w-full bg-[#0F2E64] border border-gray-400 text-white px-4 py-2 rounded-full focus:outline-none focus:border-white placeholder-gray-300"
+            className="w-full bg-transparent border border-gray-400 text-white px-4 py-2 rounded-full focus:outline-none focus:border-white placeholder-gray-300"
           />
           {/* Search Suggestions */}
           {filteredResults.length > 0 && (
-            <div className="absolute top-full mt-2 left-0 w-full bg-white text-black rounded-md shadow-lg overflow-hidden z-50">
+            <div className="absolute top-full mt-2 left-0 right-0 mx-6 bg-white text-black rounded-md shadow-lg overflow-hidden z-50">
               {filteredResults.map((applicant) => (
                 <div
                   key={applicant.id}
                   className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
-                  onClick={() => handleSelectApplicant(applicant.id)} // ✅ Click to navigate
+                  onClick={() => handleSelectApplicant(applicant.id)}
                 >
                   {applicant.name} ({applicant.email})
                 </div>

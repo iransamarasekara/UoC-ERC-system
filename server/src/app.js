@@ -6,6 +6,7 @@ const db = require("./models"); // Sequelize models
 const authRoutes = require("./routes/auth-routes");
 const applicationRoutes = require("./routes/application-routes");
 const authorizeRoles = require("./utils/auth-roles");
+const adminRoutes = require('./routes/admin-routes');
 
 const corsOptions = {
   origin: function (origin, callback) {
@@ -30,6 +31,14 @@ app.use(cors(corsOptions));
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/applications", authorizeRoles("applicant"), applicationRoutes);
+
+// In development with BYPASS_AUTH, don't apply the middleware
+if (process.env.NODE_ENV === 'development' && process.env.BYPASS_AUTH === 'true') {
+  app.use('/api/admin', adminRoutes);
+} else {
+  // In production, apply the middleware
+  app.use('/api/admin', isAuthenticated, isAdmin, adminRoutes);
+}
 
 // Sync database
 db.sequelize.sync().then(() => {

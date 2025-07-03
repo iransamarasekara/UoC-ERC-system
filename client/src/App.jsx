@@ -5,6 +5,7 @@ import ERCmainRoutes from "./routes/ERCmainRoutes";
 import ERCTechnicalCommitteeRoutes from "./routes/ERCTechnicalCommitteeRoutes";
 import OfficeStaffRoutes from "./routes/OfficeStaffRoutes";
 import { AuthContextProvider } from "../context/auth/AuthContext";
+import AdminDashboard from "./pages/TechnicalAdmin/Dashboard";
 
 const App = () => {
   return (
@@ -13,6 +14,9 @@ const App = () => {
         <Routes>
           {/* Applicant Routes */}
           <Route path="/*" element={<ApplicantRoutes />} />
+
+          {/* Technical Admin Routes */}
+          <Route path="/admin/*" element={<AdminDashboard />} />
 
           {/* CTSC/ARWS Chair Routes */}
           <Route path="/chair/*" element={<CTSCorARWSChairRoutes />} />

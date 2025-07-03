@@ -7,7 +7,58 @@ exports.getAllApplications = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+}; // Fixed missing closing bracket
+
+exports.getApplications = async (req, res) => {
+  try {
+    const { page = 1, limit = 10, status } = req.query;
+    const offset = (page - 1) * limit;
+    
+    const whereClause = {};
+    if (status) {
+      whereClause.status = status;
+    }
+    
+    console.log('Fetching applications with query:', { page, limit, status });
+    
+    // Updated to use Applicant instead of User and submission_date instead of created_at
+    const { rows, count } = await db.Application.findAndCountAll({
+      where: whereClause,
+      limit: parseInt(limit),
+      offset: parseInt(offset),
+      include: [
+        {
+          model: db.Applicant, // Changed from User to Applicant
+          as: "applicant",
+          attributes: ["applicant_id", "first_name", "last_name", "email"] // Update attributes
+        },
+        {
+          model: db.Committee,
+          as: "committee",
+          attributes: ["committee_id", "committee_name", "committee_type"]
+        }
+      ],
+      order: [["submission_date", "DESC"]] // Changed from created_at to submission_date
+    });
+    
+    console.log(`Found ${count} applications`);
+    
+    return res.status(200).json({
+      total: count,
+      totalPages: Math.ceil(count / limit),
+      currentPage: parseInt(page),
+      applications: rows
+    });
+  } catch (error) {
+    console.error("Error fetching applications:", error);
+    return res.status(500).json({ 
+      error: "Failed to fetch applications", 
+      message: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
+  }
 };
+
 
 exports.getApplicationById = async (req, res) => {
   try {

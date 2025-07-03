@@ -3,16 +3,22 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class CommitteeMember extends Model {
     static associate(models) {
-      // Committee Member belongs to one User
+      // CommitteeMember belongs to one User
       CommitteeMember.belongsTo(models.User, {
         foreignKey: "user_id",
         as: "user",
       });
 
-      // Committee Member belongs to one Committee
+      // CommitteeMember belongs to one Committee
       CommitteeMember.belongsTo(models.Committee, {
         foreignKey: "committee_id",
         as: "committee",
+      });
+      
+      // CommitteeMember has many Application reviews
+      CommitteeMember.hasMany(models.ApplicationReview, {
+        foreignKey: "reviewer_id",
+        as: "reviews",
       });
     }
   }
@@ -42,19 +48,21 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       role: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM('CHAIR', 'MEMBER', 'STAFF'),
         allowNull: false,
+        defaultValue: 'MEMBER',
       },
       is_active: {
         type: DataTypes.BOOLEAN,
+        allowNull: false,
         defaultValue: true,
-      },
+      }
     },
     {
       sequelize,
       modelName: "CommitteeMember",
-      tableName: "Committee_Members", // Based on your diagram naming convention
-      timestamps: false,
+      tableName: "CommitteeMembers",
+      timestamps: true,
       underscored: true,
     }
   );

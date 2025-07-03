@@ -362,3 +362,144 @@ exports.createAdminUser = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+// exports.createInitialAdmin = async (req, res) => {
+//   try {
+//     // Check if an admin already exists
+//     const adminExists = await db.User.findOne({
+//       where: { role: 'ADMIN' }
+//     });
+    
+//     if (adminExists) {
+//       return res.status(400).json({ 
+//         message: "Admin user already exists", 
+//         adminId: adminExists.user_id,
+//         email: adminExists.email
+//       });
+//     }
+    
+//     // Check if email already exists
+//     const emailExists = await db.User.findOne({
+//       where: { email: 'admin@uoc.lk' }
+//     });
+    
+//     if (emailExists) {
+//       return res.status(400).json({ 
+//         message: "Email already in use", 
+//         userId: emailExists.user_id,
+//         email: emailExists.email
+//       });
+//     }
+    
+//     // Create user with all required fields
+//     const user = await db.User.create({
+//       // Don't specify user_id, let the database assign it
+//       email: 'admin@uoc.lk',
+//       identity_number: 'ADMIN' + Date.now().toString().substring(7), // Make it unique
+//       first_name: 'Admin',
+//       last_name: 'User',
+//       password: 'admin123', // In production use bcrypt to hash
+//       role: 'ADMIN',
+//       created_at: new Date(),
+//       validity: false // Based on your schema
+//     });
+    
+//     // Create admin record
+//     await db.Admin.create({
+//       user_id: user.user_id,
+//       admin_type: 'ERC_TECHNICAL',
+//       created_at: new Date(),
+//       updated_at: new Date()
+//     });
+    
+//     res.status(201).json({ 
+//       message: 'Initial admin user created successfully',
+//       userId: user.user_id,
+//       email: 'admin@uoc.lk',
+//       password: 'admin123'
+//     });
+//   } catch (error) {
+//     console.error('Error creating initial admin:', error);
+    
+//     // More detailed error reporting
+//     if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
+//       const validationErrors = error.errors.map(err => ({
+//         field: err.path,
+//         message: err.message,
+//         type: err.type,
+//         value: err.value
+//       }));
+      
+//       return res.status(400).json({ 
+//         error: error.name, 
+//         details: validationErrors 
+//       });
+//     }
+    
+//     res.status(500).json({ 
+//       error: error.message,
+//       name: error.name
+//     });
+//   }
+// };
+
+exports.createInitialAdmin = async (req, res) => {
+  try {
+    // Check if an admin already exists
+    const adminUsers = await db.sequelize.query(
+      "SELECT * FROM \"Users\" WHERE role = 'ADMIN'",
+      { type: db.sequelize.QueryTypes.SELECT }
+    );
+    
+    if (adminUsers.length > 0) {
+      return res.status(200).json({ 
+        message: "Admin user already exists", 
+        adminId: adminUsers[0].user_id,
+        email: adminUsers[0].email,
+        password: "admin123" // Default password for testing
+      });
+    }
+    
+    // Find the maximum user_id in the Users table
+    const [maxIdResult] = await db.sequelize.query(
+      "SELECT COALESCE(MAX(user_id), 0) + 1 as next_id FROM \"Users\"",
+      { type: db.sequelize.QueryTypes.SELECT }
+    );
+    
+    const nextId = maxIdResult.next_id;
+    
+    // Insert the admin user with an explicit ID
+    await db.sequelize.query(`
+      INSERT INTO "Users" (
+        user_id, email, identity_number, first_name, last_name, 
+        password, role, created_at, validity
+      ) VALUES (
+        ${nextId}, 'admin@uoc.lk', 'ADMIN${Date.now()}', 'Admin', 'User', 
+        'admin123', 'ADMIN', NOW(), false
+      )
+    `);
+    
+    // Create admin record
+    await db.sequelize.query(`
+      INSERT INTO "Admins" (
+        user_id, admin_type, created_at, updated_at
+      ) VALUES (
+        ${nextId}, 'ERC_TECHNICAL', NOW(), NOW()
+      )
+    `);
+    
+    res.status(201).json({ 
+      message: 'Initial admin user created successfully',
+      userId: nextId,
+      email: 'admin@uoc.lk',
+      password: 'admin123'
+    });
+  } catch (error) {
+    console.error('Error creating initial admin:', error);
+    res.status(500).json({ 
+      error: error.message,
+      name: error.name,
+      detail: error.parent?.detail || 'No details available'
+    });
+  }
+};

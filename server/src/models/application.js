@@ -27,6 +27,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "application_id",
         as: "reviews",
       });
+
+      Application.belongsTo(models.Committee, {
+        foreignKey: "assigned_committee_id",
+        as: "committee"
+      });
     }
   }
 
@@ -51,8 +56,21 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       status: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM(
+          'DRAFT',
+          'SUBMITTED',
+          'DOCUMENT_CHECK',
+          'RETURNED_FOR_RESUBMISSION',
+          'PRELIMINARY_REVIEW',
+          'ERC_REVIEW',
+          'CTSC_REVIEW',
+          'ARWC_REVIEW',
+          'EXPEDITED_APPROVED',
+          'APPROVED',
+          'REJECTED'
+        ),
         allowNull: false,
+        defaultValue: 'DRAFT',
       },
       submission_date: {
         type: DataTypes.DATE,
@@ -69,6 +87,26 @@ module.exports = (sequelize, DataTypes) => {
       expiry_date: {
         type: DataTypes.DATE,
         allowNull: false,
+      },
+      assigned_committee_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: "Committees",
+          key: "committee_id",
+        },
+      },
+      admin_comments: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      preliminary_check_date: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      decision_date: {
+        type: DataTypes.DATE,
+        allowNull: true,
       },
     },
     {

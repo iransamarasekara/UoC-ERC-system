@@ -3,10 +3,16 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Committee extends Model {
     static associate(models) {
-      // Committee has many Committee Members
+      // Committee has many CommitteeMembers
       Committee.hasMany(models.CommitteeMember, {
         foreignKey: "committee_id",
         as: "members",
+      });
+      
+      // Committee has many Applications
+      Committee.hasMany(models.Application, {
+        foreignKey: "assigned_committee_id",
+        as: "applications",
       });
     }
   }
@@ -19,20 +25,24 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         primaryKey: true,
       },
-      committee_name: {
+      name: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      committee_type: {
-        type: DataTypes.STRING,
+      type: {
+        type: DataTypes.ENUM('ERC', 'CTSC', 'ARWC'),
         allowNull: false,
       },
+      description: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      }
     },
     {
       sequelize,
       modelName: "Committee",
       tableName: "Committees",
-      timestamps: false,
+      timestamps: true,
       underscored: true,
     }
   );
