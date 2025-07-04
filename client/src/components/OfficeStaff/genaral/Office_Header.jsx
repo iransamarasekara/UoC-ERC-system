@@ -50,7 +50,7 @@ const Office_Header = () => {
   return (
     <>
       {/* Header */}
-      <header className="bg-gradient-to-r from-[#0A1F44] to-[#0F2E64] px-6 md:px-16 lg:px-32 py-4 flex items-center justify-between relative">
+      <header className="bg-gradient-to-r from-[#0A1F44] to-[#0F2E64] px-6 md:px-16 lg:px-32 py-4 flex items-center justify-between z-50 fixed top-0 left-0 right-0">
         <div className="flex items-center">
           <img
             src={logo}

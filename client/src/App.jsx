@@ -4,30 +4,33 @@ import CTSCorARWSChairRoutes from "./routes/CTSCorARWSChairRoutes";
 import ERCmainRoutes from "./routes/ERCmainRoutes";
 import ERCTechnicalCommitteeRoutes from "./routes/ERCTechnicalCommitteeRoutes";
 import OfficeStaffRoutes from "./routes/OfficeStaffRoutes";
+import { AuthContextProvider } from "../context/auth/AuthContext";
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        {/* Applicant Routes */}
-        <Route path="/*" element={<ApplicantRoutes />} />
+    <AuthContextProvider>
+      <Router>
+        <Routes>
+          {/* Applicant Routes */}
+          <Route path="/*" element={<ApplicantRoutes />} />
 
-        {/* CTSC/ARWS Chair Routes */}
-        <Route path="/chair/*" element={<CTSCorARWSChairRoutes />} />
+          {/* CTSC/ARWS Chair Routes */}
+          <Route path="/chair/*" element={<CTSCorARWSChairRoutes />} />
 
-        {/* ERC main committee/ CTSC/ARWS members Routes */}
-        <Route path="/ercmain/*" element={<ERCmainRoutes />} />
+          {/* ERC main committee/ CTSC/ARWS members Routes */}
+          <Route path="/ercmain/*" element={<ERCmainRoutes />} />
 
-        {/* ERC Technical Committee Member Routes */}
-        <Route
-          path="/erctechnical/*"
-          element={<ERCTechnicalCommitteeRoutes />}
-        />
+          {/* ERC Technical Committee Member Routes */}
+          <Route
+            path="/Technical-Admin/*"
+            element={<ERCTechnicalCommitteeRoutes />}
+          />
 
-        {/* Office Staff Routes */}
-        <Route path="/officestaff/*" element={<OfficeStaffRoutes />} />
-      </Routes>
-    </Router>
+          {/* Office Staff Routes */}
+          <Route path="/officestaff/*" element={<OfficeStaffRoutes />} />
+        </Routes>
+      </Router>
+    </AuthContextProvider>
   );
 };
 

@@ -1,56 +1,64 @@
 import React, { useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react"; // Import icons for toggle
 import All from "../../../assets/OfficeStaff/all.png";
 import Approved from "../../../assets/OfficeStaff/approved.png";
 import Help from "../../../assets/OfficeStaff/help.png";
 import Logout from "../../../assets/OfficeStaff/logout.png";
 import Returned from "../../../assets/OfficeStaff/returned.png";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [currentPage, setCurrentPage] = useState("all");
 
   const menuItems = [
-    {
-      id: "all",
-      label: "All Applications",
-      icon: All,
-    },
+    { id: "all", label: "All Applications", icon: All, url: "/officestaff" },
     {
       id: "approved",
       label: "Approved Applications",
       icon: Approved,
+      url: "/officestaff/approved-applications",
     },
     {
       id: "returned",
       label: "Returned Applications",
       icon: Returned,
+      url: "/officestaff/returned-applications",
     },
   ];
 
   const bottomMenuItems = [
-    {
-      id: "help",
-      label: "Help",
-      icon: Help,
-    },
-    {
-      id: "logout",
-      label: "Logout",
-      icon: Logout,
-    },
+    { id: "help", label: "Help", icon: Help },
+    { id: "logout", label: "Logout", icon: Logout },
   ];
 
-  const handleNavigation = (pageId) => {
+  const handleNavigation = (pageId, url) => {
     setCurrentPage(pageId);
+    navigate(url);
   };
 
   return (
-    <div className="h-screen w-64 bg-white border-r flex flex-col">
-      <nav className="flex-1 pt-4">
+    <div
+      className={`${
+        isCollapsed ? "w-16" : "w-64"
+      } bg-white border-r-gray-600 flex flex-col h-full transition-all duration-300 pt-3`}
+    >
+      {/* Toggle Button */}
+      <button
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        className="p-2 self-end"
+      >
+        {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+      </button>
+
+      {/* Navigation Menu */}
+      <nav className="flex-1 pt-6 border-t-1 border-t-gray-400">
         <ul className="space-y-1">
           {menuItems.map((item) => (
             <li key={item.id}>
               <button
-                onClick={() => handleNavigation(item.id)}
+                onClick={() => handleNavigation(item.id, item.url)}
                 className={`w-full flex items-center px-4 py-3 text-sm transition-colors
                   ${
                     currentPage === item.id
@@ -61,16 +69,17 @@ const Sidebar = () => {
                 <img
                   src={item.icon}
                   alt={item.label}
-                  className="w-5 h-5 mr-3"
+                  className="w-7 h-7 mr-3"
                 />
-                {item.label}
+                {!isCollapsed && item.label}
               </button>
             </li>
           ))}
         </ul>
       </nav>
 
-      <div className="border-t">
+      {/* Bottom Menu */}
+      <div className="border-t-1 border-t-gray-400">
         <ul className="py-4">
           {bottomMenuItems.map((item) => (
             <li key={item.id}>
@@ -86,9 +95,9 @@ const Sidebar = () => {
                 <img
                   src={item.icon}
                   alt={item.label}
-                  className="w-5 h-5 mr-3"
+                  className="w-7 h-7 mr-3"
                 />
-                {item.label}
+                {!isCollapsed && item.label}
               </button>
             </li>
           ))}
